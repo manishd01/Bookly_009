@@ -1,3 +1,11 @@
 venv/
 __pycache__
 .env
+.env_copy
+alembic.ini
+nnt.txt
+migrations/
+requirements.txt
+requirements_18aug.txt
+
+requirements_5sep.txt
