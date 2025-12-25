@@ -21,7 +21,7 @@ class User (SQLModel, table = True):
             nullable=False
         )
     )
-    username : str
+    username :str =Field( sa_column= Column(String(255), nullable=False, unique=True))
     email : str 
     first_name : str
     last_name : str

@@ -30,7 +30,7 @@ async def get_all_books(session: AsyncSession = Depends(get_session),
                        ):
     books = await book_service.get_all_books(session)
     return books 
-
+  
 @crud_R.get('/{book_uid}', response_model =  BookFullDetails )
 async def get_a_book(book_uid:str, session: AsyncSession = Depends(get_session),
                      token_details : dict = Depends(access_token_bearer)

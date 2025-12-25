@@ -1,4 +1,4 @@
-from src.db.model import Reviews
+from src.db.model import Reviews, User
 from src.auth.service import UserService
 from src.books.service import BookService
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -18,13 +18,35 @@ class ReviewService:
         session: AsyncSession
     ):
         statement = (
-            select(Reviews)
+            select(
+                Reviews,
+                User.username
+            )
+            .join(User, Reviews.user_uid == User.uid)
             .where(Reviews.book_uid == book_uid)
             .order_by(Reviews.created_at.desc())
         )
 
         result = await session.exec(statement)
-        return result.all()
+        rows = result.all()
+
+        # 🔹 Shape response (VERY IMPORTANT)
+        reviews = []
+        for review, username in rows:
+            reviews.append({
+                "uid": review.uid,
+                "review_text": review.review_text,
+                "rating": review.rating,
+                "created_at": review.created_at,
+                "updated_at": review.updated_at,
+                "book_uid": review.book_uid,
+                "user": {
+                    "username": username
+                }
+            })
+
+        return reviews
+
     
 
     async def add_review_to_book(self, user_email :  str, book_uid: str ,
