@@ -1,0 +1,128 @@
+/* Page wrapper */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  padding: 20px;
+}
+
+/* Card */
+.auth-card {
+  background: #371a1a;
+  width: 100%;
+  max-width: 520px;
+  padding: 32px;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Heading */
+.auth-card h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #2d3748;
+}
+
+/* Forms */
+.auth-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* Inputs */
+.auth-card input {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e0;
+  font-size: 15px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+/* Buttons */
+.auth-card button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #667eea;
+  color: white;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.auth-card button:hover {
+  background: #5a67d8;
+}
+
+.auth-card button:active {
+  transform: scale(0.97);
+}
+
+/* Messages */
+.auth-message {
+  text-align: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #2d3748;
+}
+
+/* Book list */
+.book-item {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: #f9fafb;
+}
+
+.book-item h3 {
+  margin: 0 0 6px;
+  color: #2d3748;
+}
+
+.book-item p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+/* Action buttons */
+.book-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.book-actions button {
+  flex: 1;
+  font-size: 14px;
+  padding: 8px;
+}
+
+.book-actions .edit-btn {
+  background: #4299e1;
+}
+
+.book-actions .edit-btn:hover {
+  background: #3182ce;
+}
+
+.book-actions .delete-btn {
+  background: #e53e3e;
+}
+
+.book-actions .delete-btn:hover {
+  background: #c53030;
+}

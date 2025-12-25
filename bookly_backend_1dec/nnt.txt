@@ -1,0 +1,1349 @@
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new>pip freeze > requirements.txt
+https://www.youtube.com/watch?v=TO4aQ3ghFOc
+
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new>
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new>pip install -r requirements.txt
+
+python -m venv venv
+
+venv\Scripts\activate.bat
+
+fastapi is a framework , is built on asynchronous gateway interface...
+
+
+✅ Option 1: Manually zip the project (GUI method)
+Open File Explorer
+
+Go to your FastAPI project folder
+Select all files and folders (Ctrl + A)
+Hold Ctrl and deselect:
+env/ or .venv/
+__pycache__/,.git/, .mypy_cache/, etc.
+
+Any other folders you don’t want to include
+
+Right-click → choose "Send to" → "Compressed (zipped) folder"
+
+Name the zip file.
+✅ Done — no need for Python or external tools.
+
+
+
+
+
+Ssali Jonathan
+
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new>py -m pip install sqlmodel 
+
+
+virtual env
+
+C:\Users\manish.kumar30\Documents\fastapi\proj1>py --version
+Python 3.12.3
+
+C:\Users\manish.kumar30\Documents\fastapi\proj1>py -m venv env     
+
+
+C:\Users\manish.kumar30\Documents\fastapi\proj1>env\Scripts\activate
+
+(env) C:\Users\manish.kumar30\Documents\fastapi\proj1>
+
+
+(env) C:\Users\manish.kumar30\Documents\fastapi\proj1>pip install fastapi
+Collecting fastapi
+  Downloading fastapi-0.116.1-py3-none-any.whl.metadata (28 kB)
+Collecting starlette<0.48.0,>=0.40.0 (from fastapi)
+
+
+middleware,routes
+api endpoints/api path
+
+
+This message means you installed the basic FastAPI package, but to use the fastapi CLI commands (like fastapi --help), you need the extras that come with "fastapi[standard]".
+fastapi package = core FastAPI framework
+
+fastapi[standard] = FastAPI + recommended extras (including the CLI tool)
+
+(env) C:\Users\manish.kumar30\Documents\fastapi\proj1>pip show fastapi
+Name: fastapi
+Version: 0.116.1
+
+
+
+(env) C:\Users\manish.kumar30\Documents\fastapi\proj1>fastapi --help                  
+    
+
+
+
+dev mode vs production mode
+
+@app.get('/')
+async def read_root():
+    return {"message":"hello Fastapifast"}
+
+
+
+(env) C:\Users\manish.kumar30\Documents\fastapi\proj1>fastapi dev        
+
+   FastAPI   Starting development server 🚀
+
+             Searching for package file structure from directories with __init__.py files
+             Importing from C:\Users\manish.kumar30\Documents\fastapi\proj1
+ 
+    module   🐍 main.py
+
+
+
+       app   Using import string: main:app
+
+    server   Server started at http://127.0.0.1:8000
+    server   Documentation at http://127.0.0.1:8000/docs
+
+       tip   Running in development mode, for production use: fastapi run
+
+      
+passing parameter :3 types:
+path parameters:
+# http://127.0.0.1:8000/greet/john
+@app.get('/greet/{name}')
+async def greet_user(name:str)->dict:
+    return {"message":f"hello {name}"}
+
+query parameters(inside url):
+#http://127.0.0.1:8000/greet?name=kilaa
+@app.get('/greet')
+async def greet_user1(name:str)-> dict:
+    return {"message":f"hello {name}"}
+
+
+# path+query=>hybrid::
+# http://127.0.0.1:8000/greet/john?age=22
+@app.get('/greet/{name}')
+async def greet_user1(name:str,age:int)-> dict:
+    return {"message":f"hello {name}, age:{
+
+
+if want to make parameters optioma;" use typing module"
+# using optional parameters
+# http://127.0.0.1:8000/greet
+# http://127.0.0.1:8000/greet?age=2
+# http://127.0.0.1:8000/greet?name=eyy&eage=2
+@app1.get('/greet')
+async def greet_user1(name:Optional[str]="user",age:int=0)-> dict:
+    return {"message":f"hello {name}, age:{age}"}
+
+
+
+
+
+
+fastapi dev  -> this only sents get req:
+for sending other, need a rest client: anyone
+postman or any other:
+http://127.0.0.1:8000/docs -> swagger ui
+
+
+
+unprocessable entity error:
+pydantics
+
+
+serialization model/schema model:
+
+
+post req:
+class BookCreateModel(BaseModel):
+    title:str
+    author:str
+
+
+@app1.post('/create_book1')
+async def create_book(book_data:BookCreateModel):
+    return{
+        "title":book_data.title,
+        "Author":book_data.author
+    }
+
+
+-----------------------------------------------------
+fixing terminal freezing in pycharm:
+Open PyCharm and your FastAPI project.
+
+Go to the top menu:
+Run → Edit Configurations...
+
+Click the + button to add a new configuration.
+
+Choose Python (not “Python tests” or others).
+
+Fill in the fields:
+
+Name: Run Uvicorn
+
+Script path:choose module select uvicorn there
+
+
+-m uvicorn main:app1 --reload -> in parameters
+Working directory:
+Set this to your project folder, e.g.:
+
+Check the box:
+Emulate terminal in output console
+(This enables better terminal emulation so you can use Ctrl+C to stop the server.)
+
+Click Apply, then OK.
+
+--------------------------------------------------------------
+
+
+# -------------------------------------------------------
+headers:
+@app1.get('/get_headers',status_code=500)
+async def get_headers(accept:str = Header(None),
+                      content_type:str = Header(None),
+                      user_agent:str = Header(None),
+                      host:str = Header(None)
+                      ):
+  request_headers={}
+  request_headers["accept"]=accept
+  request_headers["content-type"]=content_type
+  request_headers["user-agent"]=user_agent
+  request_headers["host-name"]=host
+  print(request_headers,"dddd")
+  return request_headers
+
+# output:{
+#     "accept": "*/*",
+#     "content-type": "Application/Json",
+#     "user-agent": "PostmanRuntime/7.44.1",
+#     "host-name": "127.0.0.1:8000"
+# }
+
+# -----------------------------------------------------
+
+CRUD api:
+
+response model/data modell/schema for a entity:
+
+pydantic expects a dict only:....
+@crud_R.get('/books' ,response_model=List[Book])----solution
+ raise ResponseValidationError(
+fastapi.exceptions.ResponseValidationError: 1 validation errors:
+  {'type': 'model_attributes_type', 'loc': ('response',), 'msg': 'Input should be a valid dictionary or obj
+ect to extract fields from',
+
+
+
+
+
+
+routes:
+from fastapi import APIRouter,status
+from typing import List
+from .bookData import books
+from fastapi.exceptions import HTTPException
+from .schema import Book,BookUpdateModel
+crud_R=APIRouter()
+
+@crud_R.get('/books' ,response_model=List[Book])
+async def get_all_books():
+    return books
+
+@crud_R.get('/books/{book_id}')
+async def get_a_book(book_id:int)->dict:
+    for book in books:
+        if book['id']==book_id:
+            return book
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+    detail="Book not found")
+
+
+@crud_R.post('/books',status_code=status.HTTP_201_CREATED)
+async def add_book(book_data:Book)->dict:
+    print(type(book_data),"ee") #<class 'crud_books.Book'>
+    dict_type_book= book_data.model_dump()
+    print(type(dict_type_book),'ss')
+    books.append(dict_type_book)
+    return dict_type_book
+
+# put,patch for update
+@crud_R.patch('/books/{book_id}')
+async def update_book(book_id:int, book_update_data:BookUpdateModel )-> dict:
+    print("ddd   ", book_update_data.title,"ddd")
+    for book in books:
+        if book['id']==book_id:
+            book['title']= book_update_data.title
+            book['author']= book_update_data.author
+            book['genre']= book_update_data.genre
+            book['pages']= book_update_data.pages
+            book['isbn']= book_update_data.isbn
+            return book
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail='book not found')
+
+
+@crud_R.delete('/books/{book_id}')
+async def update_book(book_id:int )-> dict:
+    for book in books:
+        if book['id'] == book_id:
+            books.remove(book)
+            return {"msg":f"item deleted with {book_id} ID"}
+            # return {}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail='book not found')
+
+
+1:23
+
+from .bookData import books
+instead of
+
+
+from bookData import books
+The core reason: Python’s module search path and package structure
+1. When you say from bookData import books
+Python looks for a top-level module or package named bookData.
+
+This means it tries to find bookData in your environment's PYTHONPATH, or installed packages.
+
+Since bookData.py is inside the books folder, not at the top level, Python doesn’t find it and raises ModuleNotFoundError.
+
+2. When you say from .bookData import books
+The leading dot (.) means “import relative to the current package/folder.”
+
+Since routes.py and bookData.py are both inside the books folder (which is a Python package because it has __init__.py), Python imports bookData from the same package/folder.
+
+This is a relative import — Python knows to look in the same folder.
+
+
+
+---prefix in include router:
+app.include_router(crud_R,prefix= "/books")
+
+
+
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new\src>pip freeze >requirements.txt                 
+'pip' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new\src>py -m pip freeze > requirements.txt     -> works
+
+
+
+
+ORM:
+
+
+
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new\src>py -m pip install pydantic_settings
+Collecting pydantic_settings
+
+
+
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new\src>"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p
+Enter password: *******
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 13
+Server version: 8.0.39 MySQL Community Server - GPL
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> create database booksDB
+    ->
+    -> ;
+Query OK, 1 row affected (0.12 sec)
+
+
+
+
+
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new>py
+Python 3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from src.config import Settings  
+>>> 
+>>> s=settings()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'settings' is not defined. Did you mean: 'Settings'?
+>>> s=Settings() 
+>>> s.DB_URL
+'mysql://root:root%4039@localhost:3306/booksDB'
+>>>
+
+
+1:53
+28jul
+sql engine
+
+lifespan attribute in fastAPI
+
+----------------------------
+mysqldb is sync-only and not compatible with AsyncEngine.
+
+Use asyncmy driver instead for async support on MySQL.
+---------------------------
+sqlalchemy.exc.InvalidRequestError: The asyncio extension requires an async driver to be used. The loaded 'mysqldb' is not async.
+means:
+
+You are using SQLAlchemy’s async engine (AsyncEngine) with a non-async MySQL driver (mysqldb / mysqlclient), which is not compatible.
+
+What to do:
+For async MySQL support with SQLAlchemy, you need an async-compatible MySQL driver.
+
+Recommended async MySQL drivers for SQLAlchemy:
+asyncmy (pure Python, works on Windows/Linux)
+
+aiomysql (needs MySQL client libraries, may be harder on Windows)
+
+
+---------------------------------------
+
+
+
+2:17
+
+SQLAlchemy’s UUID type is supported in some dialects (like PostgreSQL: sqlalchemy.dialects.postgresql.UUID).
+
+MSSQL dialect doesn’t define a UUID type (it uses uniqueidentifier instead).
+
+--------------------
+Enter password: *******
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 87
+Server version: 8.0.39 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2024, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases
+    ->
+    -> ;
++--------------------+
+| Database           |
++--------------------+
+| booksdb            |
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+
+mysql> use booksdb
+Database changed
+mysql> show tables
+    -> ;
++-------------------+
+| Tables_in_booksdb |
++-------------------+
+| books             |
++-------------------+
+1 row in set (0.06 sec)
+
+mysql> desc books
+    -> ;
++------------+--------------+------+-----+---------+-------+
+| Field      | Type         | Null | Key | Default | Extra |
++------------+--------------+------+-----+---------+-------+
+| uid        | binary(16)   | NO   | PRI | NULL    |       |
+| title      | varchar(255) | NO   |     | NULL    |       |
+| author     | varchar(255) | NO   |     | NULL    |       |
+| year       | int          | NO   |     | NULL    |       |
+| genre      | varchar(255) | NO   |     | NULL    |       |
+| pages      | int          | NO   |     | NULL    |       |
+| isbn       | varchar(255) | NO   |     | NULL    |       |
+| created_at | datetime     | NO   |     | NULL    |       |
+| updated_at | datetime     | NO   |     | NULL    |       |
++------------+--------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+mysql>
+---------------------------------------------
+
+   # created_at:datetime = Field(Column(pg.TIMESTAMP, default=datetime.now))
+    created_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
+
+
+---------------------------
+schema:book
+
+from sqlalchemy.dialects.mysql import BINARY
+
+from sqlmodel import SQLModel, Field, Column
+import sqlalchemy.dialects.mssql as pg
+from datetime import datetime
+import uuid
+
+class Book(SQLModel, table=True):
+    __tablename__ = "books"
+
+    uid: uuid.UUID = Field (
+        sa_column = Column(
+            # pg.UNIQUEIDENTIFIER, #UUID in postgresql ---- not working
+            BINARY(16),
+            nullable=False,
+            primary_key=True,
+            default=uuid.uuid4
+        )
+    )
+    title: str
+    author: str
+    year: int
+    genre: str
+    pages: int
+    isbn: str
+    # created_at:datetime = Field(Column(pg.TIMESTAMP, default=datetime.now))
+    created_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
+    updated_at:datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
+
+
+    def __repr__(self):
+        return f'<BOOK -> {self.title}>'
+--------------------------------------
+
+ db connec:
+from sqlmodel import create_engine, text, SQLModel
+from sqlalchemy.ext.asyncio import AsyncEngine
+from src.config import Config
+from sqlalchemy import text
+from src.books.models import Book
+
+
+# async engine
+engine= AsyncEngine(
+    create_engine(
+    url=Config.DB_URL,
+    echo=True
+))
+
+async def init_db():
+    async with engine.begin() as conn:
+        # await conn.run_sync(SQLModel.metadata.create_all())
+        await conn.run_sync(lambda sync_conn: SQLModel.metadata.create_all(bind=sync_conn))
+        
+
+
+---------------------
+service classs:
+
+--------------
+2:37: 
+BookCreateModel
+29jul
+dependency injection: sharing session to all places
+
+3:#00
+
+
+
+3:16
+crud using DB
+
+31july
+
+json serilable
+model: DB feilds
+schema.py: validation on data got from user
+
+
+
+3:33:
+
+3:41
+
+lifespan events for connecting to DB:
+
+one way for create all migrations: alembic tool
+migrations: make changes without lossing the curretn data
+
+>py -m pip install alembic 
+py -m alembic -help 
+
+
+
+
+migration env:
+
+basically doing db schema changes: when running, will show these changes has been done, do you want to make them parmanent?>
+it store migrationsin versions files
+alembic use for that
+
+create:
+py -m alembic init -t async migrations 
+
+env.py file insinde migraitons:
+from src.auth.models import User
+from src.books.models import Book
+from sqlmodel import SQLModel
+from src.config import Config
+database_url = Config.DB_URL
+config.set_main_option('sqlalchemy',database_url)
+
+
+
+
+3:54
+
+py -m alembic revision --autogenerate -m "init" 
+
+
+connection werror::????
+
+
+"C:\Users\manish.kumar30\AppData\Local\Programs\Python\Python312\Lib\configparser.py", line 374, in before_set
+    raise ValueError("invalid interpolation syntax in %r at "
+ValueError: invalid interpolation syntax in 'mysql+asyncmy://root:root%4039@localhost:3306/booksDB' at position 25   
+
+
+ Solution 1: Escape % as %%
+In your alembic.ini file (or wherever you're setting the database URL), change % to %%:
+
+sqlalchemy.url = mysql+asyncmy://root:root%%4039@localhost:3306/booksDB
+That way, configparser will treat it as a literal %.
+
+solved------------------------------------
+
+Generating C:\Users\manish.kumar30\Documents\fastapi\proj01-new\migrations\versions\07d6e58ceda9_init.py ...  done
+inside this: upgrade and downgrade fcuntions
+
+--------------------------
+py -m alembic upgrade head   -> apply changes to actual DB: from version/migration
+//after this changes will show
+
+
+-----------------------
+
+
+creatign users:
+
+do changesin db:
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new>py -m alembic revision --autogenerate -m "added password col" 
+C:\Users\manish.kumar30\Documents\fastapi\proj01-new>py -m alembic upgrade head
+
+
+password hashing using passlib: py -m pip install passlib
+
+4:37
+
+
+4:41
+ erorr in signup api:
+await session.refresh(new_user) #this is imp to write, to avoid lazy ladoing
+-------------------
+
+4aug'25
+
+
+
+
+
+
+
+4:43
+JWT:header, payload, siganture
+
+py -m pip install pyjwt
+
+
+
+
+
+
+
+
+
+
+
+5:13: bearer JWT:
+Bearer token : to create protected routes
+user havingcorrect token can only use that API
+
+
+
+5:33
+creating new acess tokens
+
+
+5aug:
+token pairs:
+access vs refresh tokens   
+ 
+creeting new access token from refresh token and, verify, if wrong type of token passed
+---------------------------- dependencies file
+# from http.client import HTTPException
+from dns.e164 import to_e164
+from fastapi import HTTPException, status
+# from alembic.util import status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pycparser.ply.yacc import token
+from starlette.requests import Request
+
+from .utils import decode_token
+
+class TokenBearer(HTTPBearer):
+    def __init__(self,auto_error=True ):
+        super().__init__(auto_error=auto_error)
+
+    # async def __call__(self, *args, **kwargs): //call fcuntion in httpModule check
+    async def __call__(self, request : Request)-> HTTPAuthorizationCredentials | None:
+        creds = await super().__call__(request)
+        token = creds.credentials
+        token_data = decode_token(token)
+        # print(token_data, " tttttt ", token)
+
+        #a1. First check if token_data is valid (not None)
+        if not token_data:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="3Invalid token , enter correct onne......"
+            )
+
+        print(token_data," tttttt ", token)
+
+        #a2. Then check if token is valid using your method  --- using self.token_valid funtions
+        # if not self.token_valid(token):
+        #     raise HTTPException(
+        #         status_code=status.HTTP_403_FORBIDDEN,
+        #         detail="2Invalid or expired token"
+        #     )
+        # a1 and a2 doing the same things , diff way of writing:
+
+
+        # Now safe to check 'refresh' key
+        # if not token_data.get('refresh', False):
+        #     raise HTTPException(
+        #         status_code=status.HTTP_403_FORBIDDEN,
+        #         detail="1Invalid or expired token"
+        #     )
+
+        # if not self.token_valid:
+        #     raise HTTPException(
+        #         status_code = status.HTTP_403_FORBIDDEN,
+        #         detail = "INvalid or expired token"
+        #     )
+        # have to passs refresh token while checking in postman, not the acess token
+        print("eeee",token_data['refresh'])
+
+        self.verify_token_data(token_data)
+
+        return token_data
+
+
+    def token_valid(self, token : str ) -> bool:
+        token_data = decode_token(token)
+        if token_data is not None:
+            return True
+        else:
+            return False
+
+
+    def verify_token_data(self, token_data):
+        raise NotImplemented( "please overdie in child classes")
+
+
+class AccessTokenBearer(TokenBearer):
+    def verify_token_data(self, token_data: dict)-> None:
+        if token_data and token_data['refresh']:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="please provide accesT"
+            )
+
+class RefreshTokenBearer(TokenBearer):
+    def verify_token_data(self, token_data: dict)-> None:
+        if token_data and (not token_data['refresh']):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="please provide RefreshhT"
+            )
+
+
+--------------------------------------------------------
+
+
+5:50
+revoking user token: with reddis:
+inmemory datastore
+
+py -m pip install aioredis   -> have to install to extra server:
+
+
+
+06:05
+6aug
+-------------------------
+py -m pip install aioredis   -> have to install to extra redis server:
+
+Gotcha! If you want to test Redis commands locally without installing a real Redis server, 
+using fakeredis is a smart move. But fakeredis runs in-memory inside your Python process — it doesn’t start a network server or listen on a TCP port like 6379 or 6973.
+----> py -m pip install fakeredis 
+
+import fakeredis.aioredis  # fakeredis async support
+
+woeking;;;
+
+
+-------------------------------
+
+06:08;
+RBAC(role based access contorl)
+admin:: adding users,change roles,crud on users,book submissions,crud on users,crud on reviews, revoking
+
+users: crud on their own book submission, crud on their reviews, crud on their account
+
+dependency injections:
+
+use of __Call__() dunder function:
+
+
+admin:: adding users,change roles,crud on users,book submissions,crud on users,crud on reviews, revoking
+
+users: crud on their own book submission, crud on their reviews, crud on their account
+
+
+py -m alembic revision --autogenerate -m "add roles col to user tables:"
+--------------------------------------------------
+Great question! Here's exactly where and how to write these two different connection strings — one for Alembic and the other for your FastAPI application:
+✅ 1. For Alembic Migrations
+File: alembic.ini
+🔧 Example:
+
+# alembic.ini
+
+sqlalchemy.url = mysql+asyncmy://root:root%%4039@localhost:3306/booksDB
+✅ Why:
+%% is required here because alembic.ini is a .ini file, and % is used for string interpolation.
+
+Alembic uses this directly during revision --autogenerate and upgrade.
+
+✅ 2. For Your FastAPI App (Runtime Connection)
+There are two common ways to set this up:
+Using .env File
+File: .env--------
+DATABASE_URL=mysql+asyncmy://root:root%4039@localhost:3306/booksDB
+Then in your config.py or wherever you load env vars:
+
+from pydantic import BaseSettings
+class Config(BaseSettings):
+    DATABASE_URL: str
+
+    class Config:
+        env_file = ".env"
+------------------------------------------------------------
+
+parmanent colsution: in 
+# config.set_main_option('sqlalchemy.url',database_url) # old code
+
+#newcode:------------
+database_url = database_url.replace('%', '%%')
+config.set_main_option('sqlalchemy.url', database_url)
+
+
+---------------------------------------
+Sure! Here’s exactly what you need to add/change in your existing migrations/env.py:
+
+Find this line in your env.py:
+config.set_main_option('sqlalchemy.url', database_url)
+
+Replace it with this:
+# Escape % signs in URL to avoid configparser error
+database_url = database_url.replace('%', '%%')
+config.set_main_option('sqlalchemy.url', database_url)
+
+-------------------------------------------------------
+
+
+06:35
+
+-----------------------------
+
+7aug
+model relationships:1-m
+
+relation b/w user and book:
+new fdield:
+    user_uid: Optional[str] = Field(
+        default=None,
+        sa_column=Column(
+            CHAR(36),
+            ForeignKey("users.uid"),
+            nullable=True
+        )
+    )
+
+py -m alembic revision --autogenerate -m "added foriegn key to books table of users.uid
+>py -m alembic upgrade head
+
+
+
+Press Ctrl + Shift + Alt + J (Windows/Linux) or Cmd + Ctrl + G (Mac).
+
+This selects all occurrences of the current selection in the file.
+
+
+
+
+
+
+
+
+
+
+
+
+06:50
+
+-----------------------------8aug:
+
+
+reverse relationships:
+06:57
+lazyloading:
+sql model using lazy loading by default, when dealing with async APIs.  what problem it cause, checkkk????
+
+    books : List["models.Book"] = Relationship(  back_populates= "user",
+                                sa_relationship_kwargs={"lazy" : "selectin"})
+
+---------------------------
+
+from typing import List
+< 3.9	List[int]	Must import from typing
+>= 3.9	list[int]	Preferred, uses built-in generics
+
+
+-----------------------
+
+class Book(SQLModel, table=True):
+    # DB column for FK
+    user_uid: Optional[str] = Field(
+        default=None,
+        sa_column=Column(CHAR(36), ForeignKey("users.uid"), nullable=True)
+    )
+    
+    # ORM relationship property
+    user: Optional["User"] = Relationship(back_populates="books")
+check differnece: b/w two
+Attribute	Purpose						Database column?		ORM property?
+user_uid	Stores the foreign key value (User ID)	Yes				No
+user	Holds the related User object for easy access	No				Yes
+
+
+--------------------------------
+
+
+7:11
+3. Check Python version
+
+asyncmy may not have pre-built wheels for Python 3.13 yet.
+
+Try switching to Python 3.11 or 3.10:
+Install Python 3.11 or 3.10
+
+
+
+; DB_URL=mysql+asyncmy://root:root%4039@localhost:3306/booksDB
+; using aiolysql: casue asyncmy not working, no full wheels for 3.13 python
+DB_URL = "mysql+aiomysql://root:root%4039@localhost:3306/booksDB"
+
+done solved:
+
+
+
+
+
+
+
+4sept:--------------------------------
+ creating migrationsL from starting again:
+
+-----Make sure you have these installed:
+pip install alembic sqlmodel
+🔹 1. Initialize Alembic
+Run this in your project root (same level as main.py):
+alembic init migrations
+
+✅ 2. Update sqlalchemy.url in alembic.ini
+In your alembic.ini, find this line:
+sqlalchemy.url = sqlite:///./test.db
+Replace it with the following format for MySQL:
+sqlalchemy.url = mysql+pymysql://username:password@localhost:3306/your_database_name
+
+ 3. Modify alembic/env.py to use SQLModel metadata
+Replace ke parts of alembic/env.py to import your models and use SQLModel.metadata.
+
+🧩 Edit env.py like this:
+
+from sqlmodel import SQLModel
+from src.books.models import Book
+from src.auth.models import User
+
+target_metadata = SQLModel.metadata   # added by me
+
+then: 
+(venv) C:\Users\manish.kumar30\Documents\fastapi\proj01-new 4sept>alembic revision --autogenerate -m "Initial migration"
+
+
+(venv) C:\Users\manish.kumar30\Documents\fastapi\proj01-new 4sept>alembic upgrade head
+-------------------------------------------------------------
+
+
+6:58: reverse relationships:
+user has which books - - -  a books assigned to whch user  (both have F.K)
+
+You have:
+
+In User model (usermodel.py):
+books: List["models.Book"] = Relationship(
+    back_populates="user",
+    sa_relationship_kwargs={"lazy": "selectin"}
+)
+
+In Book model (bookmodel.py):
+user: Optional["models.User"] = Relationship(
+    back_populates="books"
+)
+
+This is a typical one-to-many relationship where:
+One User can have many Books.Each Book belongs to one User.
+
+---------------------------
+sa_relationship_kwargs={"lazy": "selectin"} why this in user model only
+
+Why only on the User → books side?
+books is a one-to-many relationship (one user, many books).When you query many users, 
+and want to access their books, eager loading (with selectin) avoids the N+1 problem (N users cause N separate queries).
+So it makes sense to use selectin here to optimize querying.
+
+Why usually not on the Book → user side?
+user is a many-to-one or one-to-one relationship (each book belongs to one user).
+Fetching the single user for each book is typically done by lazy loading by default because it’s just one row per book.
+The default lazy loading (lazy='select') is often fine here, since no large number of user queries happen per book.
+
+Can you use selectin on both?
+Yes, you can specify lazy="selectin" or other strategies on both sides depending on your use case and performance needs. But often:
+For one-to-many (User.books): eager loading is more beneficial.
+For many-to-one (Book.user): default lazy loading is usually sufficient.
+
+-------------simply use for some optimisation. in short
+-------------------------------
+
+
+7:05: more relationships:
+------------------------
+user will submit a review for book, and on which book he submitted it
+7:11
+as of now,book folder has book model, user folder has usermodel 
+but we need to be store them at a comman place to avoid, circular imports.
+
+to do that. put it into: dbfolder/model.py -> file both user and books model
+
+
+
+7:15:-------------------
+
+5sept:
+ File "C:\Users\manish.kumar30\Documents\fastapi\proj01-new 4sept\migrations\versions\e894a58f3796_added_reviews_tables.py", line 27, in upgrade
+  sa.Column('review_text', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+                             ^^^^^^^^
+NameError: name 'sqlmodel' is not defined
+either manually add "import sqlmodel" or Change any sqlmodel.sql.sqltypes.* types to sa.* equivalents for compatibility. like::::
+Example: replace
+sa.Column('review_text', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+
+with
+sa.Column('review_text', sa.Text(), nullable=False),
+
+-------------------------------------------------------
+check tables and main realtions:
+
+from sqlmodel import SQLModel, Field, Column,CHAR,TIMESTAMP, func,String, Relationship
+from typing import List
+
+from sqlalchemy.dialects.mysql import BINARY
+from sqlalchemy import Column, TIMESTAMP, func,ForeignKey
+import sqlalchemy.dialects.mssql as pg
+from datetime import datetime,date
+import uuid
+from typing import Optional
+# from src.auth import models
+
+# from sqlalchemy.dialects.mysql as pg
+class User (SQLModel, table = True):
+    uid: str = Field(
+        sa_column=Column(
+            CHAR(36),
+            primary_key=True,
+            default=lambda: str(uuid.uuid4()),
+            nullable=False
+        )
+    )
+    books : List["Book"] = Relationship(  back_populates= "user",
+                                sa_relationship_kwargs={"lazy" : "selectin"})  # # list of books added by curretn user:
+
+    reviews : List["Reviews"] = Relationship(  back_populates= "user",
+                                sa_relationship_kwargs={"lazy" : "selectin"})  # list of reviews added by curretn user:
+
+
+class Book(SQLModel, table=True):
+    uid: str = Field(
+        sa_column=Column(
+            CHAR(36),
+            primary_key=True,
+            default=lambda: str(uuid.uuid4()),
+            nullable=False
+        )
+    )
+    user_uid: Optional[str] = Field(
+        default=None,
+        sa_column=Column(
+            CHAR(36),
+            ForeignKey("users.uid"),
+            nullable=True
+        )
+    )
+
+    user : Optional["User"] = Relationship(  back_populates= "books")  #this book added by whcih user, only single user:
+    reviews : List["Reviews"] = Relationship(  back_populates= "books",
+                                sa_relationship_kwargs={"lazy" : "selectin"})  # list of reviews added to which book:
+
+    
+
+
+class Reviews(SQLModel, table=True):
+	uid: str = Field(
+        sa_column=Column(
+            CHAR(36),
+            primary_key=True,
+            default=lambda: str(uuid.uuid4()),
+            nullable=False
+        )
+    )
+    user_uid: Optional[str] = Field(
+        default=None,
+        sa_column=Column(
+            CHAR(36),
+            ForeignKey("users.uid"),
+            nullable=True
+        )
+    )
+    book_uid: Optional[str] = Field(
+        default=None,
+        sa_column=Column(
+            CHAR(36),
+            ForeignKey("books.uid"),
+            nullable=True
+        )
+    )
+    user : Optional["User"] = Relationship(  back_populates= "reviews")  # review put by which user
+    book : Optional["Book"] = Relationship(  back_populates= "reviews")   # review for which book
+
+    
+-0---------------------------------
+check this error: achese:
+The key issue is:
+In User.books, you have back_populates="users" — but in Book the attribute is user (singular), not users.
+
+Similarly, in User.reviews, back_populates="users" but in Reviews it's user (singular).
+
+Your back_populates strings must match exactly the attribute names on the other side.
+
+----------------------------------------------------------------------
+
+08:00:31 
+--------------------------
+8sept:-----
+now creating a many to many relationship:
+🔁 What is a many-to-many relationship?
+In a many-to-many relationship:
+
+A book can have many tags (e.g., "Fantasy", "Adventure").
+A tag can belong to many books (e.g., the tag "Fantasy" could be used for 10 different books).
+You cannot represent this with just two tables (Book, Tag).
+You need a third table — called a link table or association table — to hold the connections.
+
+✅ Your association table: BookTag-----------------
+class BookTag(SQLModel, table=True): 
+    book_id: uuid.UUID = Field(default=None, foreign_key="books.uid", primary_key=True)
+    tag_id: uuid.UUID = Field(default=None, foreign_key="tags.uid", primary_key=True)
+
+--------------------------------------------------------
+9sept:
+
+error handling:
+errors.py in src folder:
+
+
+error handler function: 
+
+
+@app.exception_handler(500)
+async def internal_server_error(request, exc):
+    return JSONResponse(
+        content={"meesage ": "oops something went wrong.....", 
+                 "error_code":"server_error"},
+                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
+------------------------------------------------
+
+
+11sept: middelwares
+08:33:02
+client <-> middleware <-> handler function
+after sending request and before returing response to the client
+ 	
+
+- do logging
+- customized exception
+-   perform authorisation
+asgi middleware
+----------------------------
+
+from fastapi import FastAPI
+from fastapi.requests import Request
+import time
+import logging
+
+# disable uvicorn logger
+logger = logging.getLogger('uvicorn.access')
+logger.disabled  =True
+ 
+
+
+
+def register_middleware (app: FastAPI):
+    
+    @app.middleware('http')
+    async def custom_logging(request:  Request, call_next):
+        start_time = time.time()
+        
+        print("before: --------------- ", start_time)
+        response =  await call_next(request) #means now to next middleware (id any ) or handler function
+        # // bascilly from route -> middleware -> next middlweware (if any) -> handler fcuntion
+        processing_time = time.time() - start_time
+
+        message = f"{request.method} -  {request.url.path} -- completed after {processing_time}seconds"
+
+        print("processed_time------------- : ", processing_time)
+        print("------------------------------------")
+        print(message)
+        print("------------------------------------")
+
+        return response
+--------------------------------------
+2025-09-11 16:04:53,914 INFO sqlalchemy.engine.Engine ROLLBACK
+processed_time------------- :  0.05439138412475586
+------------------------------------
+GET -  /api/v1/books/2563f510-25af-4b37-8749-2053222d67cds -- completed after 0.05439138412475586seconds      
+------------------------------------
+
+
+
+engine = create_engine(
+    url=Config.DB_URL,
+    echo=True  # This will print all SQL statements to the console # When set to False (the default), SQL statements are not logged.
+
+)
+
+
+# ///middlewares are applied for all routes in app cause it is on app instance'
+# caannot raise exception in middlwares and return them as reponse, normally -> you have to return a json response only---
+---------------------------------
+
+
+
+cors midddleware
+
+
+ASGI Middleware — Explained SimplyASGI stands for Asynchronous Server Gateway Interface.
+It’s a specification for Python web servers and applications to communicate asynchronously (handling multiple requests efficiently).
+What is Middleware in ASGI?
+Middleware is a layer of code that sits between the server and your application.
+It processes requests before they reach your app and can also process responses before they go back to the client.
+
+Middleware can do things like:Handle authentication, Manage CORS (Cross-Origin Resource Sharing), Log requests, Modify headers, Handle sessions, etc.
+
+
+    app.add_middleware(CORSMiddleware,
+                    allow_origins= ["*"], 
+                    allow_methods = ["*"],
+                    allow_headers= ["*"],
+                    allow_credentials= ["*"]
+                    ) 
+    
+    app.add_middleware(TrustedHostMiddleware,
+                       allowed_hosts=[""]
+                       )
+     
+-----------------------------
+addling email verification:
+password resets:
+09:10
+
+
+
+eamil sending:
+
+
+.............................
+ 9:31-----14 sept:
+
+
+15sept:
+
+(venv) C:\Users\manish.kumar30\Documents\fastapi\proj01-new 4sept>pip install itsdangerous   -> to send data in apps in a secure way in cryptographic way
+from itsdangerous import URLSafeTimedSerializer #for taking a string and create a token, with timed expiry
+
+
+10:07
+17sep
+---------------
+(09:21:46) Sending your first email
+(09:31:21) User account verification
+(10:07:51) Password Resets   --- skipped , not working here
+-------------------------------   
+
+
+(10:40:38) Background Tasks:
+put task in bg, we dont have to wait
+
+
+10:45-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# env\Scripts\activate    venv\Scripts\activate
+# uvicorn main:app1 --reload
