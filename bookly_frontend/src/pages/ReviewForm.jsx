@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { addReviewToBook, getReviewsByBook } from "../services/reviewService";
+import "./ReviewForm.css";
 
 function ReviewForm({ bookUid, onReviewAdded }) {
   const [rating, setRating] = useState("");
@@ -7,16 +8,14 @@ function ReviewForm({ bookUid, onReviewAdded }) {
   const [message, setMessage] = useState("");
   const [reviews, setReviews] = useState([]);
 
-  // ✅ Always call hooks first
   useEffect(() => {
-    if (!bookUid) return; // inside the hook, safe conditional
+    if (!bookUid) return;
 
     const fetchReviews = async () => {
       try {
         const res = await getReviewsByBook(bookUid);
         setReviews(res.data || []);
-      } catch (err) {
-        console.error("Failed to fetch reviews:", err);
+      } catch {
         setReviews([]);
       }
     };
@@ -34,79 +33,86 @@ function ReviewForm({ bookUid, onReviewAdded }) {
         review_text: comment,
       });
 
-      setMessage("Review added ✅");
+      setMessage("Review added successfully ✅");
       setRating("");
       setComment("");
 
-      // Refresh reviews
       const res = await getReviewsByBook(bookUid);
       setReviews(res.data || []);
       onReviewAdded?.();
     } catch (err) {
-      const errMsg =
+      setMessage(
         err.response?.data?.message ||
-        err.response?.data?.detail?.[0]?.msg ||
-        "Failed to add review ❌";
-
-      setMessage(errMsg);
+          err.response?.data?.detail?.[0]?.msg ||
+          "Failed to add review ❌"
+      );
     }
   };
 
-  const renderStars = (rating, max = 5) => {
-    return (
-      <>
-        {[...Array(max)].map((_, i) => (
-          <span key={i}>{i < rating ? "⭐" : "☆"}</span>
-        ))}
-      </>
-    );
-  };
+  const renderStars = (value, max = 5) => (
+    <div className="review-stars">
+      {[...Array(max)].map((_, i) => (
+        <span key={i} className={i < value ? "star filled" : "star"}>
+          ★
+        </span>
+      ))}
+    </div>
+  );
 
-  // ✅ Conditional rendering happens here in JSX, not before hooks
-  if (!bookUid) {
-    return <p style={{ color: "red" }}>Invalid book selected</p>;
-  }
-  console.log(reviews, "reviews fetched");
+  if (!bookUid) return null;
 
   return (
-    <div style={{ marginTop: "10px" }}>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="number"
-          min="1"
-          max="5"
-          placeholder="Rating (1-5)"
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-          required
-        />
+    <div className="reviews-wrapper">
+      <h4 className="reviews-title">⭐ Reviews</h4>
+
+      {/* Add Review */}
+      <form className="review-form" onSubmit={handleSubmit}>
+        <div className="review-form-row">
+          <input
+            className="review-rating-input"
+            type="number"
+            min="1"
+            max="5"
+            placeholder="Rating (1–5)"
+            value={rating}
+            onChange={(e) => setRating(e.target.value)}
+            required
+          />
+        </div>
+
         <textarea
-          placeholder="Write a review"
+          className="review-textarea"
+          placeholder="Write your review here..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           required
         />
-        <button type="submit">Add Review</button>
+
+        <button className="review-submit-btn" type="submit">
+          Submit Review
+        </button>
       </form>
 
-      {message && <p>{String(message)}</p>}
+      {message && <p className="review-message">{message}</p>}
 
-      <div style={{ marginTop: "15px" }}>
-        <h4>Reviews:</h4>
-        {reviews.length === 0 && <p>No reviews yet.</p>}
+      {/* Reviews List */}
+      <div className="reviews-list">
+        {reviews.length === 0 && (
+          <p className="reviews-empty">No reviews yet</p>
+        )}
+
         {reviews.map((rev) => (
-          <div
-            key={rev.uid}
-            style={{ borderTop: "1px solid #ccc", padding: "5px 0" }}
-          >
-            <p>
-              <b>Rating:</b> {renderStars(rev.rating)}
-            </p>
+          <div key={rev.uid} className="review-card">
+            {renderStars(rev.rating)}
 
-            <p>{rev.review_text}</p>
-            <p style={{ fontSize: "0.8em", color: "gray" }}>
-              by {rev.user_uid || rev.user?.email} on{" "}
-              {new Date(rev.created_at).toLocaleDateString()}
+            <p className="review-text">{rev.review_text}</p>
+
+            <p className="review-meta">
+              by{" "}
+              <span className="review-user">
+                {rev.user?.username || rev.user?.email}
+              </span>{" "}
+              • {new Date(rev.created_at).toLocaleDateString()}
             </p>
           </div>
         ))}

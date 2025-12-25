@@ -4,141 +4,84 @@ import {
   addTagsToBook,
   deleteTag,
 } from "../services/tagService";
+import "./Tag.css";
 
 function Tags({ bookUid, onTagsUpdated }) {
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
   const [message, setMessage] = useState("");
 
-  /* 🔹 Load tags for this book */
-  const loadTags = async () => {
+  var loadTags = async () => {
     if (!bookUid) return;
-
     try {
       const res = await getTagsByBook(bookUid);
       setTags(res.data || []);
-    } catch (err) {
-      console.error(err);
-      setMessage("Failed to load tags ❌");
+    } catch {
+      setMessage("Unable to load tags");
     }
   };
 
   useEffect(() => {
-    if (!bookUid) return; // skip if no bookUid
-
-    let isMounted = true; // prevent state update if component unmounts
-
-    const fetchTags = async () => {
-      try {
-        const res = await getTagsByBook(bookUid);
-        if (isMounted) setTags(res.data || []);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchTags();
-
-    return () => {
-      isMounted = false; // cleanup
-    };
+    loadTags();
   }, [bookUid]);
 
-  /* 🔹 Add a new tag */
   const handleAddTag = async (e) => {
     e.preventDefault();
-    if (!bookUid || !newTag.trim()) return;
+    if (!newTag.trim()) return;
 
     try {
-      console.log(bookUid, "current book");
-
       await addTagsToBook(bookUid, { name: newTag.trim() });
       setNewTag("");
-      setMessage("Tag added ✅");
+      setMessage("");
       loadTags();
-      if (onTagsUpdated) onTagsUpdated(); // notify parent
-    } catch (err) {
-      const errMsg =
-        err.response?.data?.detail?.[0]?.msg ||
-        err.response?.data?.message ||
-        "Failed to add tag ❌";
-      setMessage(errMsg);
+      onTagsUpdated?.();
+    } catch {
+      setMessage("Tag already exists or invalid");
     }
   };
 
-  /* 🔹 Delete a tag */
   const handleDelete = async (tagUid) => {
     try {
       await deleteTag(tagUid);
       loadTags();
-      if (onTagsUpdated) onTagsUpdated(); // notify parent
+      onTagsUpdated?.();
     } catch {
-      setMessage("Failed to delete tag ❌");
+      setMessage("Delete failed");
     }
   };
 
   return (
-    <div
-      style={{
-        padding: "15px",
-        borderTop: "1px solid #ddd",
-        marginTop: "10px",
-      }}
-    >
-      <h4>🏷️ Tags</h4>
+    <div className="tags-wrapper">
+      <div className="tags-header">
+        <span className="tags-icon">🏷️</span>
+        <h4 className="tags-heading">Tags</h4>
+      </div>
 
-      {/* Add new tag */}
-      <form onSubmit={handleAddTag} style={{ marginBottom: "10px" }}>
+      <form className="tags-input-row" onSubmit={handleAddTag}>
         <input
+          className="tags-input"
           type="text"
-          placeholder="New tag"
+          placeholder="Add a tag (e.g. fiction, finance)"
           value={newTag}
           onChange={(e) => setNewTag(e.target.value)}
-          required
-          style={{ padding: "6px", marginRight: "6px" }}
         />
-        <button type="submit" style={{ padding: "6px 12px" }}>
-          Add
+        <button className="tags-add-btn" type="submit">
+          + Add
         </button>
       </form>
 
-      {message && <p style={{ color: "red" }}>{message}</p>}
+      {message && <p className="tags-error">{message}</p>}
 
-      {/* List tags */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+      <div className="tags-chip-container">
+        {tags.length === 0 && <p className="tags-empty">No tags added yet</p>}
+
         {tags.map((tag) => (
-          <div
-            key={tag.uid}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              padding: "4px 10px",
-              border: "1px solid #ccc",
-              borderRadius: "12px",
-            }}
-          >
-            <span
-              style={{
-                color: "black",
-              }}
-            >
-              {tag.name}
-            </span>
+          <div key={tag.uid} className="tag-pill">
+            <span className="tag-text">{tag.name}</span>
             <button
+              className="tag-remove"
               onClick={() => handleDelete(tag.uid)}
-              style={{
-                background: "red",
-                color: "black",
-                border: "none",
-                borderRadius: "50%",
-                cursor: "pointer",
-                width: "20px",
-                height: "20px",
-                lineHeight: "16px",
-                textAlign: "center",
-                fontSize: "12px",
-              }}
+              title="Remove tag"
             >
               ✕
             </button>

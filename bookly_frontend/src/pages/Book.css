@@ -1,128 +1,178 @@
-/* Page wrapper */
-.auth-container {
+/* Page Layout */
+.books-page {
+  background: linear-gradient(135deg, #eef2f7, #dfe7f1);
   min-height: 100vh;
+  padding: 40px;
   display: flex;
-  align-items: center;
+  color: black;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  font-family: "Segoe UI", system-ui, sans-serif;
-  padding: 20px;
+}
+.book-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Card */
-.auth-card {
-  background: #371a1a;
-  width: 100%;
-  max-width: 520px;
-  padding: 32px;
-  border-radius: 14px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+.book-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
 
-/* Heading */
-.auth-card h2 {
-  text-align: center;
-  margin-bottom: 24px;
-  color: #2d3748;
-}
-
-/* Forms */
-.auth-card form {
+/* Header */
+.book-header {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.book-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Genre badge */
+.book-genre {
+  font-size: 0.75rem;
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 500;
+}
+
+/* Details */
+.book-details p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.book-details strong {
+  color: #111827;
+}
+
+.books-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 900px;
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Toggle */
+.books-toggle {
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
-/* Inputs */
-.auth-card input {
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e0;
-  font-size: 15px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.toggle-btn {
+  padding: 10px 20px;
+  margin: 0 8px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  background: #e0e6ed;
+  font-weight: 600;
 }
 
-.auth-card input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+.toggle-btn.active {
+  background: #4f46e5;
+  color: #fff;
+}
+
+/* Titles */
+.books-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Forms */
+.book-form {
+  background: #f9fafb;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.book-form h4 {
+  margin-bottom: 15px;
+}
+
+.book-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 /* Buttons */
-.auth-card button {
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  background: #667eea;
+.primary-btn {
+  background: #4f46e5;
   color: white;
-  transition: background 0.2s, transform 0.1s;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.auth-card button:hover {
-  background: #5a67d8;
+.secondary-btn {
+  background: #e5e7eb;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
-.auth-card button:active {
-  transform: scale(0.97);
+.danger-btn {
+  background: #dc2626;
+
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
 }
 
-/* Messages */
-.auth-message {
-  text-align: center;
-  margin-bottom: 16px;
-  font-size: 14px;
-  color: #2d3748;
-}
-
-/* Book list */
-.book-item {
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 12px;
-  background: #f9fafb;
-}
-
-.book-item h3 {
-  margin: 0 0 6px;
-  color: #2d3748;
-}
-
-.book-item p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #4a5568;
-}
-
-/* Action buttons */
-.book-actions {
-  margin-top: 10px;
+.form-actions {
   display: flex;
   gap: 10px;
 }
 
-.book-actions button {
-  flex: 1;
-  font-size: 14px;
-  padding: 8px;
+/* Messages */
+.message {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #065f46;
 }
 
-.book-actions .edit-btn {
-  background: #4299e1;
+/* Book List */
+.books-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.book-actions .edit-btn:hover {
-  background: #3182ce;
+.book-item {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 6px solid #4f46e5;
 }
 
-.book-actions .delete-btn {
-  background: #e53e3e;
+.book-title {
+  margin-bottom: 10px;
 }
 
-.book-actions .delete-btn:hover {
-  background: #c53030;
+.book-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }

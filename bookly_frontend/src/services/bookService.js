@@ -13,12 +13,17 @@ const getAuthHeaders = () => {
 //   return axios.get(API_URL + "/", { headers: getAuthHeaders() });
 // };
 
-export const getAllBooks = async (userUid) => {
+export const getCurrentUserBooks = async (userUid) => {
   return axios.get(`${API_URL}/user/${userUid}`, {
     headers: getAuthHeaders(),
   });
 };
 
+export const getAllBooks = async () => {
+  return axios.get(`${API_URL}/`, {
+    headers: getAuthHeaders(),
+  });
+};
 // Get a single book
 export const getBook = async (book_uid) => {
   return axios.get(`${API_URL}/${book_uid}`, { headers: getAuthHeaders() });
