@@ -28,25 +28,22 @@ app=FastAPI(
     version=version,
     # lifespan=life_span #not using, this was approch1
 )
-
-
-register_all_errors(app)
-
-
-
-register_middleware(app)
-
-# ✅ CORS (CORRECT)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
     ],
-    allow_credentials=True,
+    allow_credentials=True, 
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+register_all_errors(app)
+
+
+
+register_middleware(app)
 
 # ✅ Trusted hosts (optional but OK)
 app.add_middleware(

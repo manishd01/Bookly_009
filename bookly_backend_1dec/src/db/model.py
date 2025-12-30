@@ -22,11 +22,12 @@ class User (SQLModel, table = True):
         )
     )
     username :str =Field( sa_column= Column(String(255), nullable=False, unique=True))
-    email : str 
+    email :str =Field( sa_column= Column(String(255), nullable=False, unique=True)) 
     first_name : str
     last_name : str
-    role : str = Field(sa_column=Column(
-        String(255), nullable=False, server_default="user"
+   
+    role: str = Field(sa_column=Column(
+        String(255), nullable=False, server_default="Buyer"
     ))
     is_verified : bool = Field(default=False)
     password_hash :str =Field(exclude = True)

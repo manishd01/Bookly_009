@@ -1,20 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   getAllBooks,
+  getCurrentUserBooks,
   addBook,
   updateBook,
   deleteBook,
-  getCurrentUserBooks,
 } from "../services/bookService";
-import { getUser } from "../services/authService";
 import ReviewForm from "./ReviewForm";
 import Tags from "./Tags";
 import "./Book.css";
 
-function Books() {
+function Books({ auth }) {
   const [books, setBooks] = useState([]);
+  const [viewMode, setViewMode] = useState("all");
   const [message, setMessage] = useState("");
-  const [viewMode, setViewMode] = useState("my"); // my | all
   const [editBook, setEditBook] = useState(null);
 
   const [newBook, setNewBook] = useState({
@@ -25,30 +24,35 @@ function Books() {
     pages: "",
     isbn: "",
   });
-  var loadBooks = async (mode = viewMode) => {
-    try {
-      const user = getUser();
-      if (!user?.uid) {
-        setMessage("User not logged in ❌");
-        return;
-      }
 
-      let res;
-      if (mode === "my") {
-        res = await getCurrentUserBooks(user.uid); // user-specific
-      } else {
-        res = await getAllBooks(); // all books
-      }
+  // 🔹 Load books
+  var loadBooks = useCallback(
+    async (mode = viewMode) => {
+      console.log("Loading books with auth:", auth);
+      if (!auth?.authenticated) return;
 
-      setBooks(res.data);
-    } catch (err) {
-      setMessage("Failed to load books ❌", err);
-    }
-  };
+      try {
+        let res;
+        if (mode === "my") {
+          res = await getCurrentUserBooks(auth.user.uid);
+        } else {
+          res = await getAllBooks();
+        }
+        setBooks(res.data);
+        setMessage("");
+      } catch (err) {
+        console.error("Failed to load books:", err);
+        setMessage("Failed to load books ❌");
+      }
+    },
+    [auth, viewMode]
+  );
+
   useEffect(() => {
-    loadBooks(viewMode);
-  }, [viewMode]);
+    loadBooks();
+  }, [auth, viewMode, loadBooks]);
 
+  // 🔹 Form handlers
   const handleChange = (e, isEdit = false) => {
     const { name, value } = e.target;
     isEdit
@@ -59,8 +63,7 @@ function Books() {
   const handleAddBook = async (e) => {
     e.preventDefault();
     try {
-      const user = getUser();
-      await addBook({ ...newBook, user_uid: user.uid });
+      await addBook({ ...newBook, user_uid: auth.user.uid });
       setMessage("Book added successfully ✅");
       setNewBook({
         title: "",
@@ -98,29 +101,28 @@ function Books() {
     }
   };
 
+  // 🔹 Render
   return (
     <div className="books-page">
       <div className="books-card">
-        {/* Toggle */}
         <div className="books-toggle">
-          <button
-            className={`toggle-btn ${viewMode === "my" ? "active" : ""}`}
-            onClick={() => setViewMode("my")}
-          >
-            My Books
-          </button>
           <button
             className={`toggle-btn ${viewMode === "all" ? "active" : ""}`}
             onClick={() => setViewMode("all")}
           >
             All Books
           </button>
+          <button
+            className={`toggle-btn ${viewMode === "my" ? "active" : ""}`}
+            onClick={() => setViewMode("my")}
+          >
+            My Books
+          </button>
         </div>
 
         <h2 className="books-title">📚 Book Collection</h2>
 
-        {/* Add / Edit Form */}
-        {!editBook ? (
+        {!editBook && (
           <form className="book-form" onSubmit={handleAddBook}>
             <h4>Add New Book</h4>
             {Object.keys(newBook).map((key) => (
@@ -134,11 +136,11 @@ function Books() {
                 required
               />
             ))}
-            <button className="primary-btn" type="submit">
-              Add Book
-            </button>
+            <button className="primary-btn">Add Book</button>
           </form>
-        ) : (
+        )}
+
+        {editBook && (
           <form className="book-form" onSubmit={handleUpdateBook}>
             <h4>Edit Book</h4>
             {Object.keys(editBook).map(
@@ -153,12 +155,10 @@ function Books() {
                 )
             )}
             <div className="form-actions">
-              <button className="primary-btn" type="submit">
-                Update
-              </button>
+              <button className="primary-btn">Update</button>
               <button
-                className="secondary-btn"
                 type="button"
+                className="secondary-btn"
                 onClick={() => setEditBook(null)}
               >
                 Cancel
@@ -169,49 +169,25 @@ function Books() {
 
         {message && <p className="message">{message}</p>}
 
-        {/* Book List */}
         <div className="books-list">
           {books.map((book) => (
             <div key={book.uid} className="book-item">
-              <div key={book.uid} className="book-card">
-                <div className="book-header">
-                  <h3 className="book-title">{book.title}</h3>
-                  <span className="book-genre">{book.genre}</span>
-                </div>
-
-                <div className="book-details">
-                  <p>
-                    <strong>Author:</strong> {book.author}
-                  </p>
-                  <p>
-                    <strong>Published:</strong>{" "}
-                    {book.publish_date
-                      ? new Date(book.publish_date).toLocaleDateString()
-                      : "—"}
-                  </p>
-                  <p>
-                    <strong>Pages:</strong> {book.pages || "—"}
-                  </p>
-                  <p>
-                    <strong>ISBN:</strong> {book.isbn || "—"}
-                  </p>
-                </div>
+              <div className="book-card">
+                <h3>{book.title}</h3>
+                <p>
+                  <b>Author:</b> {book.author}
+                </p>
+                <p>
+                  <b>Genre:</b> {book.genre}
+                </p>
               </div>
 
               <Tags bookUid={book.uid} onTagsUpdated={loadBooks} />
 
               <div className="book-actions">
-                <button
-                  className="secondary-btn"
-                  onClick={() => setEditBook(book)}
-                >
-                  Edit
-                </button>
+                <button onClick={() => setEditBook(book)}>Edit</button>
                 {viewMode === "my" && (
-                  <button
-                    className="danger-btn"
-                    onClick={() => handleDeleteBook(book.uid)}
-                  >
+                  <button onClick={() => handleDeleteBook(book.uid)}>
                     Delete
                   </button>
                 )}

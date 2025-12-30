@@ -1,18 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signup } from "../services/authService";
 import "./Auth.css";
-import "./AuthModel.css";
 
-function Signup() {
+function Signup({ onSignup }) {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
-    password: "",
+    password1: "",
     first_name: "",
     last_name: "",
+    role: "",
   });
 
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => (document.body.style.overflow = "auto");
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -24,22 +29,32 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log("Submitting signup with data:", formData);
       const res = await signup(formData);
-      setMessage(res.data.message || "Signup successful ✅");
+      console.log("Signup response:", res);
+      setMessage("Account created successfully 🎉 Please login.");
+
+      // ⏳ small delay so user can read message
+      setTimeout(() => {
+        if (onSignup) {
+          onSignup(); // trigger login modal
+        }
+      }, 1200);
     } catch (err) {
       setMessage(err.response?.data?.message || "Signup failed ❌");
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2>Signup</h2>
+    <>
+      <div className="signup-container">
+        <h2 className="auth-title">Signup</h2>
 
         <form onSubmit={handleSubmit}>
           <input
             name="username"
             placeholder="Username"
+            value={formData.username}
             onChange={handleChange}
             required
           />
@@ -48,14 +63,16 @@ function Signup() {
             type="email"
             name="email"
             placeholder="Email"
+            value={formData.email}
             onChange={handleChange}
             required
           />
 
           <input
             type="password"
-            name="password"
+            name="password1"
             placeholder="Password"
+            value={formData.password1}
             onChange={handleChange}
             required
           />
@@ -63,6 +80,7 @@ function Signup() {
           <input
             name="first_name"
             placeholder="First Name"
+            value={formData.first_name}
             onChange={handleChange}
             required
           />
@@ -70,16 +88,30 @@ function Signup() {
           <input
             name="last_name"
             placeholder="Last Name"
+            value={formData.last_name}
             onChange={handleChange}
             required
           />
+          <label>Select Role: </label>
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled>
+              Select Role
+            </option>
+            <option value="Buyer">Buyer</option>
+            <option value="Seller">Seller</option>
+          </select>
 
           <button type="submit">Signup</button>
         </form>
 
         {message && <p className="auth-message">{message}</p>}
       </div>
-    </div>
+    </>
   );
 }
 

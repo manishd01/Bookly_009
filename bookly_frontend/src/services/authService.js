@@ -1,55 +1,39 @@
-import axios from "axios";
+// src/services/authService.js
+import api from "./api_root";
 
-const API_BASE = "http://127.0.0.1:8000/api/v1/auth";
+const API_URL = "/api/v1/auth";
 
-// LOGIN
-export const login = ({ email, password }) => {
-  return axios.post(`${API_BASE}/login`, {
-    email: email,
-    password1: password, // backend expects password1
-  });
-};
-
-// SIGNUP
-export const signup = ({
-  username,
-  email,
-  password,
-  first_name,
-  last_name,
-}) => {
-  return axios.post(`${API_BASE}/signup`, {
-    username,
+/* ===================== LOGIN ===================== */
+export const login = async ({ email, password }) => {
+  return api.post(`${API_URL}/login`, {
     email,
     password1: password, // backend expects password1
-    first_name,
-    last_name,
   });
 };
 
-// LOGOUT
-export const logout = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("user");
-
-  // Optional redirect
-  window.location.href = "/login";
+/* ===================== LOGOUT ===================== */
+export const logout = async () => {
+  return api.get(`${API_URL}/logout`);
 };
 
-// GET stored access token
-export const getAccessToken = () => localStorage.getItem("accessToken");
-
-// GET stored refresh token
-export const getRefreshToken = () => localStorage.getItem("refreshToken");
-
-/* ---------------- GET STORED USER ---------------- */
-export const getUser = () => {
-  const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
+/* ===================== SIGNUP ===================== */
+export const signup = async (data) => {
+  console.log("Signup data in auth service js:", data);
+  return api.post(`${API_URL}/signup`, data);
 };
 
-export const getAuthHeaders = () => {
-  const token = getAccessToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
+/* ===================== GET CURRENT USER ===================== */
+export const getCurrentUser = async () => {
+  const res = await api.get("/api/v1/auth/me");
+
+  console.log("getCurrentUser response in auth service:", res);
+  return {
+    authenticated: !!res.data.user,
+    user: res.data.user,
+  };
+};
+
+/* ===================== REFRESH TOKEN ===================== */
+export const refreshAccessToken = async () => {
+  return api.get(`${API_URL}/refresh_token`);
 };

@@ -18,17 +18,28 @@ crud_R=APIRouter()
 # from real DB:
 book_service =  BookService()
 access_token_bearer = AccessTokenBearer()
-role_checker =  RoleChecker(['admin','user'])
+role_checker =  RoleChecker(['admin', 'Buyer', 'Seller'])
 
 # , _:bool = Depends(role_checker) in fucntion parameters
 # ,dependencies=[Depends(role_checker)] in get/post() args(), both ways work ,,
 # check next two fucntions
+@crud_R.get('/user/{user_uid}' ,response_model=List[BookFullDetails]
+            ,dependencies=[Depends(role_checker)])
+async def get_user_book_submissions(user_uid : str, session: AsyncSession = Depends(get_session),
+                        token_details : dict = Depends(access_token_bearer.get_token_from_request)
+                       ):
+
+    books = await book_service.get_user_books(user_uid, session)
+    return books
+
+
 @crud_R.get('/' ,response_model=List[BookFullDetails]
             ,dependencies=[Depends(role_checker)])
 async def get_all_books(session: AsyncSession = Depends(get_session),
-                        token_details : dict = Depends(access_token_bearer)
                        ):
+    
     books = await book_service.get_all_books(session)
+    print(books,"Booksss")
     return books 
   
 @crud_R.get('/{book_uid}', response_model =  BookFullDetails )
@@ -45,14 +56,6 @@ async def get_a_book(book_uid:str, session: AsyncSession = Depends(get_session),
         # detail="Book not found")
         raise BookNotFound()
 
-@crud_R.get('/user/{user_uid}' ,response_model=List[BookFullDetails]
-            ,dependencies=[Depends(role_checker)])
-async def get_user_book_submissions(user_uid : str, session: AsyncSession = Depends(get_session),
-                        token_details : dict = Depends(access_token_bearer)
-                       ):
-
-    books = await book_service.get_user_books(user_uid, session)
-    return books
 
 
 

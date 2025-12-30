@@ -1,52 +1,34 @@
-import axios from "axios";
-import { getAccessToken } from "./authService";
+import api from "./api_root"; // shared axios instance with withCredentials: true
 
-const API_URL = "http://127.0.0.1:8000/api/v1/tags";
-
-const authHeaders = () => ({
-  Authorization: `Bearer ${getAccessToken()}`,
-});
+const API_URL = "/api/v1/tags";
 
 /* 🔹 Get all tags */
 export const getAllTags = () => {
-  return axios.get(API_URL + "/", {
-    headers: authHeaders(),
-  });
+  return api.get(`${API_URL}/`);
 };
 
 /* 🔹 Create new tag */
 export const createTag = (data) => {
-  return axios.post(API_URL + "/", data, {
-    headers: authHeaders(),
-  });
+  return api.post(`${API_URL}/`, data);
 };
 
 /* 🔹 Add tags to book */
 export const addTagsToBook = (bookUid, tagsPayload) => {
-  console.log(bookUid, "bookuid in service", tagsPayload);
-  console.log(`${API_URL}/book/${bookUid}`, "url");
-
-  return axios.post(`${API_URL}/book/${bookUid}`, tagsPayload, {
-    headers: authHeaders(),
-  });
+  console.log(bookUid, "bookUid in service", tagsPayload);
+  return api.post(`${API_URL}/book/${bookUid}`, tagsPayload);
 };
 
 /* 🔹 Update tag */
 export const updateTag = (tagUid, data) => {
-  return axios.put(`${API_URL}/${tagUid}`, data, {
-    headers: authHeaders(),
-  });
+  return api.put(`${API_URL}/${tagUid}`, data);
 };
 
 /* 🔹 Delete tag */
 export const deleteTag = (tagUid) => {
-  return axios.delete(`${API_URL}/${tagUid}`, {
-    headers: authHeaders(),
-  });
+  return api.delete(`${API_URL}/${tagUid}`);
 };
 
-export const getTagsByBook = async (bookUid) => {
-  return await axios.get(`${API_URL}/${bookUid}/tags`, {
-    headers: authHeaders(),
-  });
+/* 🔹 Get tags by book */
+export const getTagsByBook = (bookUid) => {
+  return api.get(`${API_URL}/${bookUid}/tags`);
 };

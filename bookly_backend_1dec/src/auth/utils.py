@@ -16,19 +16,31 @@ from src.config import Config
 
 ACCESS_TOKEN_EXPIRY = 3600
 
-# password_context = CryptContext(
-#     schemes=['bcrypt']
-# )
+from passlib.context import CryptContext
 
-password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# keep using bcrypt
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# // install  exact everison
+# pip uninstall bcrypt passlib
+# pip install bcrypt==3.2.0 passlib
+
+MAX_BCRYPT_BYTES = 72
+
+def truncate_password(password: str) -> bytes:
+    """Truncate password to 72 bytes as bcrypt requires."""
+    return password.encode("utf-8")[:MAX_BCRYPT_BYTES]
 
 def generate_hash(password: str) -> str:
-    return password_context.hash(password)
+    truncated = truncate_password(password)
+    # pass the bytes directly to bcrypt via pwd_context
+    return pwd_context.hash(truncated)
 
 def verify_hash(password: str, hashed: str) -> bool:
-    return password_context.verify(password, hashed)
+    truncated = truncate_password(password)
+    return pwd_context.verify(truncated, hashed)
 
- 
+
+
 # def verify_passwd(password: str, hash: str) -> bool:
 #     return password_context.verify(password, hash)
 

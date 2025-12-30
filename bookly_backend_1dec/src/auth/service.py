@@ -5,14 +5,19 @@ from .schema import UserCreateModel
 from .utils import generate_hash
 
 class UserService:
+    async def get_user_by_username(self,username :str, session: AsyncSession):
+        statement = select(User).where(User.username == username)
+        res = await session.exec(statement)
+        book = res.first()
+        return book
     async def get_user_by_email(self,email :str, session: AsyncSession):
         statement = select(User).where(User.email == email)
         res = await session.exec(statement)
         book = res.first()
         return book
 
-    async def user_exists(self,email, session : AsyncSession):
-        user = await self.get_user_by_email(email, session)
+    async def user_exists(self,username, session : AsyncSession):
+        user = await self.get_user_by_username(username, session)
         if user is None:
             return False
         else:
@@ -24,8 +29,8 @@ class UserService:
             **user_data_dict
         )
         new_user.password_hash = generate_hash(user_data_dict['password1'])
-        new_user.role = "user" #user role by herre
-
+        # new_user.role = "user" #user role by herre
+        print("new user: ",new_user)
         session.add(new_user)
         await session.commit()
         await session.refresh(new_user) #this is imp to write, to avoid lazy ladoing

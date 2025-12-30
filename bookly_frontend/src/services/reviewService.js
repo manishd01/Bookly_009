@@ -1,11 +1,6 @@
-import axios from "axios";
-import { getAccessToken } from "./authService";
+import api from "./api_root";
 
-const API_BASE = "http://127.0.0.1:8000/api/v1/reviews";
-
-const getAuthHeaders = () => ({
-  Authorization: `Bearer ${getAccessToken()}`,
-});
+const API_BASE = "/api/v1/reviews";
 
 // ADD REVIEW
 export const addReviewToBook = (bookUid, reviewData) => {
@@ -13,11 +8,10 @@ export const addReviewToBook = (bookUid, reviewData) => {
     throw new Error("bookUid is required");
   }
 
-  return axios.post(`${API_BASE}/book/${bookUid}`, reviewData, {
-    headers: getAuthHeaders(),
-  });
+  return api.post(`${API_BASE}/book/${bookUid}`, reviewData);
 };
 
+// GET REVIEWS
 export const getReviewsByBook = (bookUid) => {
-  return axios.get(`${API_BASE}/book/${bookUid}`);
+  return api.get(`${API_BASE}/book/${bookUid}`);
 };
