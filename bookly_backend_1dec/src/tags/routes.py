@@ -10,7 +10,7 @@ from src.db.model import User
 from src.auth.dependencies import get_current_user
 
 tags_router =  APIRouter()
-user_role_checker = Depends(RoleChecker(['user', 'admin']))
+user_role_checker = Depends(RoleChecker(["admin", "Buyer", "Seller"]))
 tag_service = TagService()
 
 @tags_router.get("/", response_model=List[TagModel], dependencies=[user_role_checker])

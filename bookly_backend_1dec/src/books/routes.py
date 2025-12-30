@@ -63,7 +63,9 @@ async def get_a_book(book_uid:str, session: AsyncSession = Depends(get_session),
              , dependencies = [Depends(role_checker)])
 async def add_book(book_data:BookCreateModel, session: AsyncSession = Depends(get_session),
                    token_details : dict = Depends(access_token_bearer))->dict:
-    user_id = token_details.get('user')['user_uid']
+    print("Token details in add_book:", token_details)
+    print("uid of user:",token_details.get('user')['uid'])
+    user_id = token_details.get('user')['uid']
 
     new_book = await book_service.create_a_book(book_data, session, user_id)
     return new_book

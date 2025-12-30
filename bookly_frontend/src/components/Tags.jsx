@@ -4,19 +4,24 @@ import {
   addTagsToBook,
   deleteTag,
 } from "../services/tagService";
+import { useAuth } from "../context/AuthContext";
 import "./Tag.css";
 
 function Tags({ bookUid, onTagsUpdated }) {
+  const { auth } = useAuth(); // Get current user
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
   const [message, setMessage] = useState("");
+
+  const isSeller = auth.user.role === "Seller";
 
   var loadTags = async () => {
     if (!bookUid) return;
     try {
       const res = await getTagsByBook(bookUid);
       setTags(res.data || []);
-    } catch {
+    } catch (err) {
+      console.error("Error loading tags", err);
       setMessage("Unable to load tags");
     }
   };
@@ -35,7 +40,8 @@ function Tags({ bookUid, onTagsUpdated }) {
       setMessage("");
       loadTags();
       onTagsUpdated?.();
-    } catch {
+    } catch (err) {
+      console.error("Error adding tag", err);
       setMessage("Tag already exists or invalid");
     }
   };
@@ -57,18 +63,21 @@ function Tags({ bookUid, onTagsUpdated }) {
         <h4 className="tags-heading">Tags</h4>
       </div>
 
-      <form className="tags-input-row" onSubmit={handleAddTag}>
-        <input
-          className="tags-input"
-          type="text"
-          placeholder="Add a tag (e.g. fiction, finance)"
-          value={newTag}
-          onChange={(e) => setNewTag(e.target.value)}
-        />
-        <button className="tags-add-btn" type="submit">
-          + Add
-        </button>
-      </form>
+      {/* Only show input if user is a seller */}
+      {isSeller && (
+        <form className="tags-input-row" onSubmit={handleAddTag}>
+          <input
+            className="tags-input"
+            type="text"
+            placeholder="Add a tag (e.g. fiction, finance)"
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+          />
+          <button className="tags-add-btn" type="submit">
+            + Add
+          </button>
+        </form>
+      )}
 
       {message && <p className="tags-error">{message}</p>}
 
@@ -78,13 +87,16 @@ function Tags({ bookUid, onTagsUpdated }) {
         {tags.map((tag) => (
           <div key={tag.uid} className="tag-pill">
             <span className="tag-text">{tag.name}</span>
-            <button
-              className="tag-remove"
-              onClick={() => handleDelete(tag.uid)}
-              title="Remove tag"
-            >
-              ✕
-            </button>
+            {/* Only show delete button if seller */}
+            {isSeller && (
+              <button
+                className="tag-remove"
+                onClick={() => handleDelete(tag.uid)}
+                title="Remove tag"
+              >
+                ✕
+              </button>
+            )}
           </div>
         ))}
       </div>

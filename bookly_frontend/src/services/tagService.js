@@ -30,5 +30,6 @@ export const deleteTag = (tagUid) => {
 
 /* 🔹 Get tags by book */
 export const getTagsByBook = (bookUid) => {
+  console.log(bookUid, "bookUid in getTagsByBook service");
   return api.get(`${API_URL}/${bookUid}/tags`);
 };

@@ -1,9 +1,17 @@
-import Home from "./pages/Home";
+import { BrowserRouter } from "react-router-dom";
+import AuthProvider from "./context/AuthProvider";
+import AppRoutes from "./routes/AppRoutes";
+import Navbar from "./components/Navbar";
 
 function App() {
-  return <Home />;
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Navbar />
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  );
 }
 
 export default App;
-
-// npm run dev

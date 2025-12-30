@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { signup } from "../services/authService";
 import "./Auth.css";
 
-function Signup({ onSignup }) {
+function Signup({ onSignupSuccess }) {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -36,8 +36,8 @@ function Signup({ onSignup }) {
 
       // ⏳ small delay so user can read message
       setTimeout(() => {
-        if (onSignup) {
-          onSignup(); // trigger login modal
+        if (onSignupSuccess) {
+          onSignupSuccess(); // trigger login modal
         }
       }, 1200);
     } catch (err) {
@@ -102,8 +102,8 @@ function Signup({ onSignup }) {
             <option value="" disabled>
               Select Role
             </option>
-            <option value="Buyer">Buyer</option>
-            <option value="Seller">Seller</option>
+            <option value="buyer">Buyer</option>
+            <option value="seller">Seller</option>
           </select>
 
           <button type="submit">Signup</button>

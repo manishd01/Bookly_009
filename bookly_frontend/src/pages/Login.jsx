@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { login, getCurrentUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 import "./Auth.css";
+import { useNavigate } from "react-router-dom";
 
 function Login({ onLogin }) {
+  const { setAuth } = useAuth();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -17,23 +22,39 @@ function Login({ onLogin }) {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      // 1️⃣ Login (sets cookie/session)
+      // 1️⃣ Login (cookie/session set)
       await login(formData);
 
-      // 2️⃣ Fetch currently authenticated user
+      // 2️⃣ Fetch logged-in user
       const currentUser = await getCurrentUser();
       console.log("Logged-in user:", currentUser);
 
-      // 3️⃣ Store user in parent/global state
-      onLogin(currentUser);
+      // 3️⃣ Store in global auth state
+      setAuth({
+        loading: false,
+        authenticated: true,
+        user: currentUser.user,
+      });
+
+      // 4️⃣ Redirect based on role ✅
+      const role = currentUser.user.role;
+
+      if (role === "Buyer") {
+        navigate("/buyer");
+      } else if (role === "Seller") {
+        navigate("/seller");
+      }
+
+      // 5️⃣ Close modal
+      if (onLogin) onLogin();
 
       setMessage("Login successful 🎉");
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setMessage(err.response?.data?.message || "Login failed ❌");
     }
   };

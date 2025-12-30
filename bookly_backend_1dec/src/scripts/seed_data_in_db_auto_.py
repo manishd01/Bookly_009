@@ -182,7 +182,7 @@ async def seed_books():
 
 if __name__ == "__main__":
     # asyncio.run(seed_users())
-    asyncio.run(seed_books())
+    asyncio.run(seed_books()) 
 
 
 # // python -m src.scripts.seed_data_in_db_auto_

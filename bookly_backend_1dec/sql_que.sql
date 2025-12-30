@@ -17,6 +17,7 @@ select * from users;
 select * from users where role="Seller";
 select * from books;
 select * from tags;
+select * from reviews;
 select * from booktag;
 SET SQL_SAFE_UPDATES = 0;
 ----- deleting tables: 
