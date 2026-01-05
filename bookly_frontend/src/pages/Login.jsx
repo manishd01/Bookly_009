@@ -27,8 +27,8 @@ function Login({ onLogin }) {
 
     try {
       // 1️⃣ Login (cookie/session set)
-      await login(formData);
-
+      const loginResponse = await login(formData);
+      console.log("Login response:", loginResponse);
       // 2️⃣ Fetch logged-in user
       const currentUser = await getCurrentUser();
       console.log("Logged-in user:", currentUser);
@@ -54,8 +54,10 @@ function Login({ onLogin }) {
 
       setMessage("Login successful 🎉");
     } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data?.message || "Login failed ❌");
+      // Axios error object has `response.data.detail` for HTTPException
+      const backendMessage = err.response?.data?.detail || "Login failed ❌";
+      setMessage(backendMessage + " ❌");
+      console.error("Login error:", backendMessage);
     }
   };
 

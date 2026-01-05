@@ -5,7 +5,6 @@ import {
   deleteTag,
 } from "../services/tagService";
 import { useAuth } from "../context/AuthContext";
-import "./Tag.css";
 
 function Tags({ bookUid, onTagsUpdated }) {
   const { auth } = useAuth(); // Get current user
@@ -20,8 +19,9 @@ function Tags({ bookUid, onTagsUpdated }) {
     try {
       const res = await getTagsByBook(bookUid);
       setTags(res.data || []);
+      console.log(res.data, "loaded tags"); // ❗ keep console log
     } catch (err) {
-      console.error("Error loading tags", err);
+      console.error("Error loading tags", err); // ❗ keep console log
       setMessage("Unable to load tags");
     }
   };
@@ -35,70 +35,83 @@ function Tags({ bookUid, onTagsUpdated }) {
     if (!newTag.trim()) return;
 
     try {
+      console.log("Adding tag:", newTag); // ❗ keep log
       await addTagsToBook(bookUid, { name: newTag.trim() });
       setNewTag("");
       setMessage("");
       loadTags();
       onTagsUpdated?.();
     } catch (err) {
-      console.error("Error adding tag", err);
+      console.error("Error adding tag", err); // ❗ keep log
       setMessage("Tag already exists or invalid");
     }
   };
 
   const handleDelete = async (tagUid) => {
     try {
+      console.log("Deleting tag:", tagUid); // ❗ keep log
       await deleteTag(tagUid);
       loadTags();
       onTagsUpdated?.();
-    } catch {
+    } catch (err) {
+      console.error("Delete failed", err); // ❗ keep log
       setMessage("Delete failed");
     }
   };
 
   return (
-    <div className="tags-wrapper">
-      <div className="tags-header">
-        <span className="tags-icon">🏷️</span>
-        <h4 className="tags-heading">Tags</h4>
-      </div>
+    <div className="bg-gray-50 rounded-xl p-4 shadow-sm">
+      {/* Header */}
+      <div className="flex items-center mb-4">
+        <span className="text-xl mr-2">🏷️</span>
+        <h4 className="font-semibold text-gray-800"></h4>
 
-      {/* Only show input if user is a seller */}
-      {isSeller && (
-        <form className="tags-input-row" onSubmit={handleAddTag}>
-          <input
-            className="tags-input"
-            type="text"
-            placeholder="Add a tag (e.g. fiction, finance)"
-            value={newTag}
-            onChange={(e) => setNewTag(e.target.value)}
-          />
-          <button className="tags-add-btn" type="submit">
-            + Add
-          </button>
-        </form>
-      )}
+        {/* Add Tag Input (Seller only) */}
+        {isSeller && (
+          <form className="flex gap-2 mb-3" onSubmit={handleAddTag}>
+            <input
+              type="text"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              placeholder="Add a tag (e.g. fiction, finance)"
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition"
+            >
+              + Add
+            </button>
+          </form>
+        )}
 
-      {message && <p className="tags-error">{message}</p>}
+        {/* Error / Status Message */}
+        {message && <p className="text-sm text-red-600 mb-2">{message}</p>}
 
-      <div className="tags-chip-container">
-        {tags.length === 0 && <p className="tags-empty">No tags added yet</p>}
+        {/* Tag Chips */}
+        <div className="flex flex-wrap gap-2">
+          {tags.length === 0 && (
+            <p className="text-gray-400 text-sm">No tags added yet</p>
+          )}
 
-        {tags.map((tag) => (
-          <div key={tag.uid} className="tag-pill">
-            <span className="tag-text">{tag.name}</span>
-            {/* Only show delete button if seller */}
-            {isSeller && (
-              <button
-                className="tag-remove"
-                onClick={() => handleDelete(tag.uid)}
-                title="Remove tag"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        ))}
+          {tags.map((tag) => (
+            <div
+              key={tag.uid}
+              className="flex items-center gap-2 bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium"
+            >
+              <span>{tag.name}</span>
+              {isSeller && (
+                <button
+                  className="hover:text-red-600 font-bold"
+                  onClick={() => handleDelete(tag.uid)}
+                  title="Remove tag"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

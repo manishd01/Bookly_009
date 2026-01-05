@@ -11,39 +11,74 @@ export default function Home() {
 
   // Redirect ONLY after loading is done
   useEffect(() => {
-    if (
-      !auth.loading &&
-      auth.authenticated &&
-      auth.user?.role !== prevRole.current
-    ) {
-      prevRole.current = auth.user.role;
-      auth.user.role === "seller" ? navigate("/seller") : navigate("/buyer");
+    if (!auth.loading && auth.authenticated) {
+      console.log("Redirecting user with role:", auth.user.role);
+
+      const currentPath = window.location.pathname.toLowerCase();
+
+      if (auth.user.role === "seller" && currentPath !== "/seller") {
+        prevRole.current = auth.user.role;
+        navigate("/seller", { replace: true });
+      } else if (auth.user.role === "buyer" && currentPath !== "/buyer") {
+        prevRole.current = auth.user.role;
+        navigate("/buyer", { replace: true });
+      }
     }
-  }, []);
+  }, [auth, navigate]);
 
   // Prevent rendering while auth is loading
-  if (auth.loading) return null;
+  if (auth.loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <p className="text-gray-500 text-lg">Loading...</p>
+      </div>
+    );
 
   return (
-    <>
-      <header>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8 space-y-10">
+      {/* Header */}
+      <header className="w-full max-w-4xl bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
         {auth.authenticated && auth.user ? (
           <>
-            Hi {auth.user.email} ({auth.user.role})
-            <button onClick={signOut}>Logout</button>
+            <div className="text-gray-800 font-medium">
+              Hi <span className="font-semibold">{auth.user.email}</span> (
+              <span className="capitalize">{auth.user.role}</span>)
+            </div>
+            <button
+              onClick={signOut}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-medium transition"
+            >
+              Logout
+            </button>
           </>
         ) : (
-          <>
-            <button onClick={() => setModal("login")}>Login</button>
-            <button onClick={() => setModal("signup")}>Signup</button>
-          </>
+          <div className="flex justify-center gap-4 w-full">
+            <button
+              onClick={() => setModal("login")}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition"
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setModal("signup")}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition"
+            >
+              Signup
+            </button>
+          </div>
         )}
       </header>
 
-      {!auth.authenticated && <h1>Welcome to Bookly 📚</h1>}
+      {/* Welcome Message */}
+      {!auth.authenticated && (
+        <h1 className="text-4xl font-bold text-gray-800 text-center mt-10">
+          Welcome to Bookly 📚
+        </h1>
+      )}
 
+      {/* Modal */}
       {modal && <AuthModal type={modal} onClose={() => setModal(null)} />}
-    </>
+    </div>
   );
 }
 
@@ -146,3 +181,4 @@ export default function Home() {
 
 // // http://127.0.0.1:5173/ server running in this:
 // //http://127.0.0.1:5173/ vs http://localhost:5173/ is different for cookies
+//npx tailwindcss init

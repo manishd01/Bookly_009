@@ -1,5 +1,5 @@
 from debugpy.adapter import access_token
-from fastapi import APIRouter,status, Depends
+from fastapi import APIRouter,status, Depends ,  UploadFile, File
 from typing import List
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +7,7 @@ from src.books.service import BookService
 from fastapi.exceptions import HTTPException
 
 from .bookData import books
-from .schema import Book, BookUpdateModel, BookCreateModel, BookModelReviews, BookFullDetails
+from .schema import Book, BookUpdateModel, BookCreateModel, BulkUploadResult, BookFullDetails
 from src.db.main import get_session
 from src.auth.dependencies import AccessTokenBearer, RoleChecker
 # from ..auth.routes import role_checker
@@ -23,23 +23,25 @@ role_checker =  RoleChecker(['admin', 'Buyer', 'Seller'])
 # , _:bool = Depends(role_checker) in fucntion parameters
 # ,dependencies=[Depends(role_checker)] in get/post() args(), both ways work ,,
 # check next two fucntions
-@crud_R.get('/user/{user_uid}' ,response_model=List[BookFullDetails]
+# //
+@crud_R.get('/user/{user_uid}' 
             ,dependencies=[Depends(role_checker)])
 async def get_user_book_submissions(user_uid : str, session: AsyncSession = Depends(get_session),
                         token_details : dict = Depends(access_token_bearer.get_token_from_request)
                        ):
-
+   
     books = await book_service.get_user_books(user_uid, session)
+    print(books,"Usergetting Books in  routes: with user detailsaswell")
     return books
 
 
-@crud_R.get('/' ,response_model=List[BookFullDetails]
+@crud_R.get('/' 
             ,dependencies=[Depends(role_checker)])
 async def get_all_books(session: AsyncSession = Depends(get_session),
                        ):
     
     books = await book_service.get_all_books(session)
-    print(books,"Booksss")
+    print(books,"Booksss in routes----------------------------------")
     return books 
   
 @crud_R.get('/{book_uid}', response_model =  BookFullDetails )
@@ -98,6 +100,25 @@ async def delete_book(book_uid:str, session: AsyncSession = Depends(get_session)
         # raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
         #                 detail='book not found')
         raise BookNotFound()
+
+from src.auth.dependencies import get_current_user
+from src.db.model import User
+@crud_R.post(
+    "/bulk-upload",
+    response_model=BulkUploadResult
+)
+async def bulk_upload_books(
+    file: UploadFile = File(...),
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    return await book_service.bulk_upload_books(
+        file=file,
+        user_uid=current_user.uid,
+        session=session
+    )
+
+
 
 
 

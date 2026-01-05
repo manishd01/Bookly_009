@@ -1,13 +1,14 @@
 from pydantic import BaseModel
 from datetime import date,datetime
 from src.reviews.schema import ReviewModel
-from typing import List
+from typing import List, Optional
 from src.tags.schema import TagModel
+
 class Book(BaseModel):
     uid: str
     title: str
     author: str
-    publish_date: date
+    publish_date: date 
     genre: str
     pages: int
     isbn: str
@@ -23,6 +24,8 @@ class BookModelReviews(Book):
 
 class BookFullDetails(BookModelReviews):
     tags : List[TagModel]
+    
+    
 
 
 class BookCreateModel(BaseModel):
@@ -40,3 +43,8 @@ class BookUpdateModel(BaseModel):
     pages: int
     isbn: str
 
+
+class BulkUploadResult(BaseModel):
+    success_count: int
+    failed_count: int
+    errors: List[dict] = []

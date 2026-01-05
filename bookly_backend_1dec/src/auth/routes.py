@@ -64,7 +64,7 @@ async def login(
     user = result.scalar_one_or_none()
 
     print("user fetched for login:", user)
-    if not user:
+    if not user or user is None:
         raise HTTPException( 
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Email does not exist"

@@ -54,9 +54,9 @@ export const uploadBooksBulk = async (file) => {
         "Content-Type": "multipart/form-data",
       },
     });
-  } catch (error) {
-    console.error("Error uploading books in bulk:", error);
-    throw error;
+  } catch (err) {
+    console.error("Bulk upload API error:", err); // ❗ keep console log
+    throw err; // 👈 VERY IMPORTANT
   }
 };
 

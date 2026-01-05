@@ -39,3 +39,4 @@ class UserLoginModel(BaseModel):
 
 class EMailSchema (BaseModel):
     addresses : List[str]
+    
