@@ -7,6 +7,8 @@ from sqlmodel import select,desc
 from datetime import datetime
 from fastapi import HTTPException, UploadFile
 import pandas as pd
+from sqlalchemy import select, or_
+from sqlmodel import select, func
 
 REQUIRED_COLUMNS = {
         "title",
@@ -17,21 +19,42 @@ REQUIRED_COLUMNS = {
         "isbn"
     }
 class BookService:
-    async def get_all_books(self,session:AsyncSession):
+    async def get_all_books(
+    self,
+    session: AsyncSession,
+    search: str | None = None,
+    page: int | None = 1,
+    limit: int | None = 15,):
+        # Base query
         statement = (
-        select(Book, User.uid, User.username, User.role)
-        .join(User, User.uid == Book.user_uid)
-        .where(Book.user_uid == User.uid)
-        .order_by(Book.created_at.desc())
-    )
+            select(Book, User.uid, User.username, User.role)
+            .join(User, User.uid == Book.user_uid)
+            .order_by(Book.created_at.desc())
+        )
+
+        # 🔍 Search filter
+        if search:
+            statement = statement.where(
+                or_(
+                    Book.title.ilike(f"%{search}%"),
+                    Book.author.ilike(f"%{search}%"),
+                    Book.genre.ilike(f"%{search}%"),
+                    Book.isbn.ilike(f"%{search}%"),
+                    User.username.ilike(f"%{search}%"),
+                )
+            ) 
+
+        print("current oage:", page, "limit:", limit)
+        # Pagin ation
+        if page is not None and limit is not None:
+            statement = statement.offset((page - 1) * limit).limit(limit)
 
         res = await session.exec(statement)
-
         books_with_user = []
         for row in res.all():
             book, user_uid, username, role = row
             books_with_user.append({
-                "book": book,  # You can still return the full Book object
+                "book": book,
                 "user": {
                     "uid": user_uid,
                     "username": username,
@@ -39,7 +62,25 @@ class BookService:
                 }
             })
 
-        return books_with_user
+    # Total count (ignore pagination)
+        count_stmt = select(func.count()).select_from(Book)
+        if search:
+            count_stmt = count_stmt.join(User, User.uid == Book.user_uid).where(
+                or_(
+                    Book.title.ilike(f"%{search}%"),
+                    Book.author.ilike(f"%{search}%"),
+                    Book.genre.ilike(f"%{search}%"),
+                    Book.isbn.ilike(f"%{search}%"),
+                    User.username.ilike(f"%{search}%"),
+                )
+            )
+        total_result = await session.exec(count_stmt)
+        total_count = total_result.one()   # get integer
+
+        return { 
+            "data": books_with_user,
+            "total": total_count
+        }
 
     async def get_a_book(self, book_uid:str ,session:AsyncSession)->Book:
         statement = select(Book).where(Book.uid == book_uid)
@@ -83,7 +124,7 @@ class BookService:
             return book_to_update
         else:
            return None
-
+ 
 
 
     async def delete_a_book(self, book_uid:str ,session:AsyncSession):

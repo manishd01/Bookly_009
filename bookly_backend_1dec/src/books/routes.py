@@ -1,7 +1,7 @@
 from debugpy.adapter import access_token
 from fastapi import APIRouter,status, Depends ,  UploadFile, File
 from typing import List
-
+from fastapi import Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.books.service import BookService
 from fastapi.exceptions import HTTPException
@@ -35,14 +35,22 @@ async def get_user_book_submissions(user_uid : str, session: AsyncSession = Depe
     return books
 
 
-@crud_R.get('/' 
-            ,dependencies=[Depends(role_checker)])
-async def get_all_books(session: AsyncSession = Depends(get_session),
-                       ):
-    
-    books = await book_service.get_all_books(session)
-    print(books,"Booksss in routes----------------------------------")
-    return books 
+@crud_R.get('/', dependencies=[Depends(role_checker)])
+async def get_all_books(
+    search: str | None = None,
+    page: int | None = 1,
+    limit: int | None = 15,
+    session: AsyncSession = Depends(get_session),
+):
+    books = await book_service.get_all_books(
+        session=session,
+        search=search,
+        page=page,
+        limit=limit
+    )
+    return books
+
+
   
 @crud_R.get('/{book_uid}', response_model =  BookFullDetails )
 async def get_a_book(book_uid:str, session: AsyncSession = Depends(get_session),

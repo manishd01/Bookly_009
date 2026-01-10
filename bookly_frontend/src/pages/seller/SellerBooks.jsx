@@ -143,16 +143,49 @@ export default function SellerBooks() {
       {/* Seller Books List */}
       <div className="bg-white p-6 rounded-2xl shadow-md max-w-5xl mx-auto flex flex-col space-y-6">
         <h3 className="text-2xl font-semibold text-gray-800">Your Books</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-6 w-full">
+
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6
+                border border-gray-200 rounded-3xl p-6"
+        >
           {books.map((b) => (
             <div
               key={b.uid}
-              className="bg-gray-50 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col"
+              className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 flex flex-col
+              border border-gray-200 rounded-2xl p-6"
             >
+              {/* Title */}
               <h4 className="text-xl font-semibold text-gray-900 mb-3">
                 {b.title}
               </h4>
-              <Tags bookUid={b.uid} onTagsUpdated={loadBooks} />
+
+              {/* Details */}
+              <div className="space-y-1 text-sm text-gray-700">
+                <p>
+                  <span className="font-medium">Author:</span> {b.author}
+                </p>
+                <p>
+                  <span className="font-medium">Genre:</span> {b.genre}
+                </p>
+                <p>
+                  <span className="font-medium">Published:</span>{" "}
+                  {new Date(b.publish_date).toLocaleDateString()}
+                </p>
+                <p>
+                  <span className="font-medium">Pages:</span> {b.pages}
+                </p>
+                <p>
+                  <span className="font-medium">ISBN:</span> {b.isbn}
+                </p>
+              </div>
+
+              {/* Spacer */}
+              <div className="flex-grow" />
+
+              {/* Tags */}
+              <div className="mt-4">
+                <Tags bookUid={b.uid} onTagsUpdated={loadBooks} />
+              </div>
             </div>
           ))}
         </div>

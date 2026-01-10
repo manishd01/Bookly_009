@@ -3,8 +3,19 @@ import api from "./api_root";
 const API_URL = "/api/v1/books";
 
 // Get all books
-export const getAllBooks = async () => {
-  return api.get(`${API_URL}/`);
+// services/bookService.js
+export const getAllBooks = async ({
+  search = "",
+  page = 1,
+  limit = 15,
+} = {}) => {
+  const params = {};
+  if (search) params.search = search;
+  if (page != null) params.page = page;
+  if (limit != null) params.limit = limit;
+
+  console.log("Fetching books with params:", params);
+  return api.get(`${API_URL}/`, { params });
 };
 
 // Get current user's books

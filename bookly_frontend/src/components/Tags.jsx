@@ -60,58 +60,66 @@ function Tags({ bookUid, onTagsUpdated }) {
   };
 
   return (
-    <div className="bg-gray-50 rounded-xl p-4 shadow-sm">
+    <div className="bg-gray-50 rounded-xl p-4 shadow-sm w-full">
       {/* Header */}
-      <div className="flex items-center mb-4">
-        <span className="text-xl mr-2">🏷️</span>
-        <h4 className="font-semibold text-gray-800"></h4>
+      <div className="flex items-center gap-2 mb-3">
+        <span className="text-xl">🏷️</span>
+        <h4 className="font-semibold text-gray-800">Tags</h4>
+      </div>
 
-        {/* Add Tag Input (Seller only) */}
-        {isSeller && (
-          <form className="flex gap-2 mb-3" onSubmit={handleAddTag}>
-            <input
-              type="text"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-              placeholder="Add a tag (e.g. fiction, finance)"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition"
-            >
-              + Add
-            </button>
-          </form>
+      {/* Add Tag Input (Seller only) */}
+      {isSeller && (
+        <form
+          className="flex items-center gap-2 mb-3 w-full"
+          onSubmit={handleAddTag}
+        >
+          <input
+            type="text"
+            className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg
+                   focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            placeholder="Add a tag (e.g. fiction, finance)"
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+          />
+
+          <button
+            type="submit"
+            className="shrink-0 px-4 py-2 bg-indigo-600 text-white font-medium
+                   rounded-lg hover:bg-indigo-700 transition"
+          >
+            + Add
+          </button>
+        </form>
+      )}
+
+      {/* Error / Status Message */}
+      {message && <p className="text-sm text-red-600 mb-2">{message}</p>}
+
+      {/* Tag Chips */}
+      <div className="flex flex-wrap gap-2">
+        {tags.length === 0 && (
+          <p className="text-gray-400 text-sm">No tags added yet</p>
         )}
 
-        {/* Error / Status Message */}
-        {message && <p className="text-sm text-red-600 mb-2">{message}</p>}
+        {tags.map((tag) => (
+          <div
+            key={tag.uid}
+            className="flex items-center gap-2 bg-indigo-100 text-indigo-800
+                   px-3 py-1 rounded-full text-sm font-medium max-w-full"
+          >
+            <span className="truncate">{tag.name}</span>
 
-        {/* Tag Chips */}
-        <div className="flex flex-wrap gap-2">
-          {tags.length === 0 && (
-            <p className="text-gray-400 text-sm">No tags added yet</p>
-          )}
-
-          {tags.map((tag) => (
-            <div
-              key={tag.uid}
-              className="flex items-center gap-2 bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium"
-            >
-              <span>{tag.name}</span>
-              {isSeller && (
-                <button
-                  className="hover:text-red-600 font-bold"
-                  onClick={() => handleDelete(tag.uid)}
-                  title="Remove tag"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
+            {isSeller && (
+              <button
+                className="hover:text-red-600 font-bold shrink-0"
+                onClick={() => handleDelete(tag.uid)}
+                title="Remove tag"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
